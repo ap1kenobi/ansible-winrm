@@ -1,16 +1,19 @@
 import subprocess
 
-PSSCRIPTFILE = '/home/trond/Documents/ansible-winrm/script.ps1'
+PSSCRIPTFILE = 'script.ps1'
 PSHOSTNAME = "192.168.188.155"
 PSUSERNAME = "Administrator"
-PSPASSWORD = "MyPassword"
-proc = subprocess.Popen(['/opt/ActiveTcl-8.6/bin/tclsh', '/home/trond/Documents/ansible-winrm/winrmrunner.tcl', PSSCRIPTFILE,PSHOSTNAME, PSUSERNAME, PSPASSWORD], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+PSPASSWORD = "MyPassword123"
+proc = subprocess.Popen(['/opt/ActiveTcl-8.6/bin/tclsh', 'winrmrunner.tcl', PSSCRIPTFILE,PSHOSTNAME, PSUSERNAME, PSPASSWORD], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 out, err = proc.communicate()
 #outtext = out.rstrip()
 #outtext = outtext.strip()
 
 #print 'stdout:', outtext
+
+if err:
+    print "An error ocurred"
 
 outarray = out.splitlines()
 
@@ -27,8 +30,7 @@ AnsibleDetail = AnsibleDetail.replace("AnsibleDetail:","")
 AnsibleError = AnsibleError.replace("AnsibleError:","")
 
 
-if err:
-    print "An error ocurred"
+
 if AnsibleError:
     print "A script-error ocurred: " + AnsibleError
 
