@@ -4,6 +4,7 @@ PSSCRIPTFILE = 'script.ps1'
 PSHOSTNAME = "192.168.188.155"
 PSUSERNAME = "Administrator"
 PSPASSWORD = "MyPassword123"
+timeout = "500"
 proc = subprocess.Popen(['/opt/ActiveTcl-8.6/bin/tclsh', 'winrmrunner.tcl', PSSCRIPTFILE,PSHOSTNAME, PSUSERNAME, PSPASSWORD], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 
 out, err = proc.communicate()
@@ -17,25 +18,24 @@ if err:
 
 outarray = out.splitlines()
 
+AnsibleError = None
+Ansibleresult = None
+AnsibleDetail = None
+
 for line in outarray:
     if "AnsibleResult" in line:
         Ansibleresult = line
+        Ansibleresult = Ansibleresult.replace("Ansibleresult:","")
     if "AnsibleDetail" in line:
         AnsibleDetail = line
+        AnsibleDetail = AnsibleDetail.replace("AnsibleDetail:","")
     if "AnsibleError" in line:
         AnsibleError = line
-
-Ansibleresult = Ansibleresult.replace("Ansibleresult:","")
-AnsibleDetail = AnsibleDetail.replace("AnsibleDetail:","")
-AnsibleError = AnsibleError.replace("AnsibleError:","")
-
-
+        AnsibleError = AnsibleError.replace("AnsibleError:","")
 
 if AnsibleError:
     print "A script-error ocurred: " + AnsibleError
 
-#RESULT = "Fake"
-#print RESULT
 
 if Ansibleresult == 'Changed':
     print 'Changed stuff'
@@ -46,12 +46,3 @@ else:
 print AnsibleDetail
 
 
-#tcl = Tcl()
-# Execute proc main from foo.tcl with MYFILE as the arg
-#tcl.eval('source /home/trond/Documents/ansible-py/winrmrunner.tcl')
-#tcl_str = tcl.eval('main %s' % MYFILE)
-
-
-# Access the contents of a Tcl variable, $tclVar from python
-#tcl.eval('set tclVar foobarme')
-#tclVar = tcl.eval('return $tclVar')

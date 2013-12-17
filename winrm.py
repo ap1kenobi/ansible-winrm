@@ -41,6 +41,10 @@ def main():
 
     outarray = out.splitlines()
 
+    AnsibleError = None
+    Ansibleresult = None
+    AnsibleDetail = None
+
     for line in outarray:
         if "AnsibleResult" in line:
             Ansibleresult = line
