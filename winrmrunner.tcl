@@ -1,7 +1,7 @@
-lappend auto_path /opt/ActiveTcl-8.6/lib
-lappend auto_path /opt/ActiveTcl-8.6/lib/tcl8.6
-lappend auto_path /opt/ActiveTcl-8.6/lib/teapot/package/linux-glibc2.3-x86_64/lib
-lappend auto_path /opt/ActiveTcl-8.6/lib/teapot/package/tcl/lib
+#lappend auto_path /opt/ActiveTcl-8.6/lib
+#lappend auto_path /opt/ActiveTcl-8.6/lib/tcl8.6
+#lappend auto_path /opt/ActiveTcl-8.6/lib/teapot/package/linux-glibc2.3-x86_64/lib
+#lappend auto_path /opt/ActiveTcl-8.6/lib/teapot/package/tcl/lib
 #lappend auto_path ../
 
 #puts $auto_path
@@ -11,16 +11,16 @@ package require tclwinrm
 package require base64
 
 set psscriptpath  [lindex $argv 0]
-puts $psscriptpath
+#puts $psscriptpath
 
 set winrmhostname [lindex $argv 1]
-puts $winrmhostname
+#puts $winrmhostname
 
 set winrmusername [lindex $argv 2]
-puts $winrmusername
+#puts $winrmusername
 
 set winrmpassword [lindex $argv 3]
-puts $winrmpassword
+#puts $winrmpassword
 
 set address $winrmhostname
 set port 5985
