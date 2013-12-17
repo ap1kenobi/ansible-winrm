@@ -6,6 +6,7 @@ import subprocess
 def main():
     tclwinrmrunnerpath = ""
     tclpath = ""
+    operationtimeout = "120"
 
     module = AnsibleModule(
         argument_spec = dict(
@@ -15,6 +16,7 @@ def main():
             pspassword=dict(required=True),
             tclwinrmrunnerpath=dict(required=False),
             tclpath=dict(required=False),
+            operationtimeout=dict(required=False),
         ),
         supports_check_mode=False,
     )
@@ -30,7 +32,7 @@ def main():
     psusername = module.params['psusername']
     pspassword = module.params['pspassword']
 
-    proc = subprocess.Popen([tclpath, tclwinrmrunnerpath, psscriptname,pshostname, psusername, pspassword], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen([tclpath, tclwinrmrunnerpath, psscriptname,pshostname, psusername, pspassword, operationtimeout], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate()
 
     if err:
@@ -42,15 +44,14 @@ def main():
     for line in outarray:
         if "AnsibleResult" in line:
             Ansibleresult = line
+            Ansibleresult = Ansibleresult.replace("AnsibleResult:","")
         if "AnsibleDetail" in line:
-                AnsibleDetail = line
+            AnsibleDetail = line
+            AnsibleDetail = AnsibleDetail.replace("AnsibleDetail:","")
         if "AnsibleError" in line:
             AnsibleError = line
-
-    Ansibleresult = Ansibleresult.replace("Ansibleresult:","")
-    AnsibleDetail = AnsibleDetail.replace("AnsibleDetail:","")
-    AnsibleError = AnsibleError.replace("AnsibleError:","")
-
+            AnsibleError = AnsibleError.replace("AnsibleError:","")
+    
     if AnsibleError:
             #We have a script-based error
             module.fail_json(msg="Script-based error: " + AnsibleError)

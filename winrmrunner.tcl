@@ -22,6 +22,8 @@ set winrmusername [lindex $argv 2]
 set winrmpassword [lindex $argv 3]
 #puts $winrmpassword
 
+set operationtimeout [lindex $argv 4]
+
 set address $winrmhostname
 set port 5985
 set user $winrmusername
@@ -39,7 +41,7 @@ set fp [open $psscriptpath r]
 #	"Installed Memory: " + [int]($RAM.TotalPhysicalMemory /$MB) + " MB"
 #}
 set command "powershell -encodedcommand [::base64::encode -wrapchar "" [encoding convertto unicode $script]]"
-set result [tclwinrm::rshell $command 120 0]
+set result [tclwinrm::rshell $command $operationtimeout 0]
 puts \n$result
 
 
