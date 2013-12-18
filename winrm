@@ -6,7 +6,8 @@ import subprocess
 def main():
     tclwinrmrunnerpath = ""
     tclpath = ""
-    operationtimeout = "120"
+    operationtimeout = ""
+    debugmode = ""
 
     module = AnsibleModule(
         argument_spec = dict(
@@ -17,6 +18,7 @@ def main():
             tclwinrmrunnerpath=dict(required=False),
             tclpath=dict(required=False),
             operationtimeout=dict(required=False),
+            debugmode=dict(required=False),
         ),
         supports_check_mode=False,
     )
@@ -25,14 +27,20 @@ def main():
         tclwinrmrunnerpath = '/opt/tclwinrunner/winrmrunner.tcl'
     if not tclpath:
         tclpath = '/opt/ActiveTcl-8.6/bin/tclsh'
+    if not operationtimeout:
+        operationtimeout = '120'
+    if not debugmode:
+        debugmode = '0'
 
 
     psscriptname = module.params['psscriptname']
     pshostname = module.params['pshostname']
     psusername = module.params['psusername']
     pspassword = module.params['pspassword']
+    operationtimeout = module.params['operationtimeout']
+    debugmode = module.params['debugmode']
 
-    proc = subprocess.Popen([tclpath, tclwinrmrunnerpath, psscriptname,pshostname, psusername, pspassword, operationtimeout], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    proc = subprocess.Popen([tclpath, tclwinrmrunnerpath, psscriptname,pshostname, psusername, pspassword], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     out, err = proc.communicate()
 
     if err:
@@ -42,13 +50,13 @@ def main():
     outarray = out.splitlines()
 
     AnsibleError = None
-    Ansibleresult = None
+    AnsibleResult = None
     AnsibleDetail = None
 
     for line in outarray:
         if "AnsibleResult" in line:
-            Ansibleresult = line
-            Ansibleresult = Ansibleresult.replace("AnsibleResult:","")
+            AnsibleResult = line
+            AnsibleResult = AnsibleResult.replace("AnsibleResult:","")
         if "AnsibleDetail" in line:
             AnsibleDetail = line
             AnsibleDetail = AnsibleDetail.replace("AnsibleDetail:","")
@@ -61,17 +69,14 @@ def main():
             module.fail_json(msg="Script-based error: " + AnsibleError)
 
     #No error
-    if Ansibleresult == "Changed":
+    if AnsibleResult == "Changed":
         changed=True
-    elif Ansibleresult == "Unchanged":
+    elif AnsibleResult == "Unchanged":
         changed=False
     else:
         changed=True
 
-    module.exit_json(changed=changed,msg=AnsibleDetail)
-
-
-
+    module.exit_json(changed=changed,msg=out)
 
 # import module snippets
 from ansible.module_utils.basic import *

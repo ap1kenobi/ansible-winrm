@@ -24,6 +24,9 @@ set winrmpassword [lindex $argv 3]
 
 set operationtimeout [lindex $argv 4]
 
+#Debugmode: set to 0 for normal, 1 for debug mode (verbose)
+set debugmode [lindex $argv 5]
+
 set address $winrmhostname
 set port 5985
 set user $winrmusername
@@ -41,7 +44,7 @@ set fp [open $psscriptpath r]
 #	"Installed Memory: " + [int]($RAM.TotalPhysicalMemory /$MB) + " MB"
 #}
 set command "powershell -encodedcommand [::base64::encode -wrapchar "" [encoding convertto unicode $script]]"
-set result [tclwinrm::rshell $command 120 0]
+set result [tclwinrm::rshell $command 1000 0]
 puts \n$result
 
 
